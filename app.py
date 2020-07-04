@@ -42,19 +42,8 @@ def load_model():
     """
     This function loads the hate speech ML model.
     """
-    download_nltk() # only download the first time streamlit loads
 
     return load('model.joblib')
-
-
-@st.cache
-def download_nltk():
-    """
-    Download necessary nltk data
-    """
-    nltk.download('punkt')
-    nltk.download('stopwords')
-    nltk.download('averaged_perceptron_tagger')
 
 
 def get_prediction(message: str):
