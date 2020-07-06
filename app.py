@@ -19,8 +19,6 @@ from sklearn.tree import DecisionTreeClassifier
 
 from joblib import dump, load
 
-st.title('Hate Speech Identifier')
-
 
 def class_to_name(class_label):
     """
@@ -30,12 +28,9 @@ def class_to_name(class_label):
     if class_label == 0:
         return "Hate speech"
     elif class_label == 1:
-        return "Offensive language"
-    elif class_label == 2:
-        return "Neither"
+        return "Not hate speech"
     else:
         return "No label"
-
 
 @st.cache
 def load_model():
@@ -46,11 +41,10 @@ def load_model():
     return load('model.joblib')
 
 
-def get_prediction(message: str):
+def get_prediction(model, message: str):
     """
     Runs the model on user input and returns prediction
     """
-    model = load_model()
     pred = model.predict([message])
 
     return class_to_name(pred[0])
@@ -62,7 +56,7 @@ def generate_stopwords():
     Generate stopwords for NLP
     """
     all_stopwords = stopwords.words('english')
-    excludes = ['@user', '@', '!', 'RT']
+    excludes = ['rt', '&#57361;']
     all_stopwords.extend(excludes)
 
     return all_stopwords
@@ -75,11 +69,12 @@ def preprocess(text: str):
     space_pattern = '\s+'
     url_regex = ('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|'
         '[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
-#     mention_regex = '@[\w\-]+'
+    symbol_regex = '&#[^\s]+'
     mention_regex = '@[^\s]+'
     
     parsed_text = text.lower()
     parsed_text = re.sub(space_pattern, ' ', parsed_text)
+    parsed_text = re.sub(symbol_regex, ' ', parsed_text)
     parsed_text = re.sub(url_regex, 'URLHERE', parsed_text)
     parsed_text = re.sub(mention_regex, 'MENTIONHERE', parsed_text)
 
@@ -106,6 +101,13 @@ def stem_words(text: str):
     return [porter.stem(word) for word in filtered_words if word not in ['URLHERE', 'MENTIONHERE']]
 
 
-user_input = st.text_input("Enter input here: ", value="Hi, this is not a hate speech")
-st.write('Processing message: ', user_input)
-st.write('Result:', get_prediction(user_input))
+def main():
+    model = load_model()
+    
+    st.title('Hate Speech Identifier')
+    user_input = st.text_input("Enter input here: ", value="Hi, this is not a hate speech")
+    st.write('Processing message: ', user_input)
+    st.write('Result:', get_prediction(model, user_input))
+
+if __name__ == '__main__':
+    main()
