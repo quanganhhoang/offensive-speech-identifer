@@ -26,18 +26,18 @@ def class_to_name(class_label):
     feature name to a particular class.
     """
     if class_label == 0:
-        return "Hate speech"
+        return "Offensive speech"
     elif class_label == 1:
-        return "Not hate speech"
+        return "Not offensive speech"
     else:
         return "No label"
+
 
 @st.cache
 def load_model():
     """
     This function loads the hate speech ML model.
     """
-
     return load('model.joblib')
 
 
@@ -60,6 +60,15 @@ def generate_stopwords():
     all_stopwords.extend(excludes)
 
     return all_stopwords
+
+
+def analyzer(doc: str):
+    all_stopwords = generate_stopwords()
+    stemmer = PorterStemmer()
+    words = word_tokenize(doc)
+    filtered_words = [word for word in words if not word in all_stopwords and word.isalnum()]
+    
+    return [stemmer.stem(word) for word in filtered_words if word not in ['URLHERE', 'MENTIONHERE']]
 
 
 def preprocess(text: str):
@@ -89,25 +98,10 @@ def preprocess(text: str):
     return parsed_text
 
 
-def stem_words(text: str):
-    """
-    Lemmatize words
-    """
-    all_stopwords = generate_stopwords()
-    words = word_tokenize(text)
-    filtered_words = [word for word in words if not word in all_stopwords and word.isalnum()]
-    porter = PorterStemmer()
 
-    return [porter.stem(word) for word in filtered_words if word not in ['URLHERE', 'MENTIONHERE']]
+model = load_model()
 
-
-def main():
-    model = load_model()
-    
-    st.title('Hate Speech Identifier')
-    user_input = st.text_input("Enter input here: ", value="Hi, this is not a hate speech")
-    st.write('Processing message: ', user_input)
-    st.write('Result:', get_prediction(model, user_input))
-
-if __name__ == '__main__':
-    main()
+st.title('Offensive Speech Identifier')
+user_input = st.text_input("Enter input here: ", value="Hi, this is not an offensive speech")
+st.write('Processing message: ', user_input)
+st.write('Result:', get_prediction(model, user_input))
