@@ -1,10 +1,10 @@
-# hate-speech-identifer
-A web app to identify hate speech.
+# Offensive Speech Identifier
+A web app to identify offensive speech.
 
 
 Technology stack: streamlit.io
 
-Sneak peek: https://hate-speech-identifier.herokuapp.com/
+Sneak peek: https://offensive-speech-identifer.herokuapp.com/
 
 
 ## Getting Started
