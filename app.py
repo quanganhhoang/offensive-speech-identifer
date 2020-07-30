@@ -48,7 +48,7 @@ def load_model():
     return load('model.joblib')
 
 
-def get_prediction(model, message: str):
+def get_prediction(message: str):
     """
     Runs the model on user input and returns prediction
     """
