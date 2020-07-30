@@ -40,7 +40,7 @@ def class_to_name(class_label):
         return "No label"
 
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def load_model():
     """
     This function loads the hate speech ML model.
