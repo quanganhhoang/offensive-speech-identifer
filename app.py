@@ -5,6 +5,8 @@ import nltk
 from nltk import sent_tokenize, word_tokenize, PorterStemmer, pos_tag
 from nltk.corpus import stopwords
 
+from collections import defaultdict
+
 import numpy as np
 import pandas as pd
 import re
